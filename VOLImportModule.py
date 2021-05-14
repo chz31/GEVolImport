@@ -17,7 +17,7 @@ class VOLImportModule(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "VOLImportModule"  # TODO: make this more human readable by adding spaces
-    self.parent.categories = ["SlicerMorph/Input and Output"]  # TODO: set categories (folders where the module shows up in the module selector)
+    self.parent.categories = ["Examples"]  # TODO: set categories (folders where the module shows up in the module selector)
     self.parent.dependencies = []  # TODO: add here list of module names that this module requires
     self.parent.contributors = ["John Doe (AnyWare Corp.)"]  # TODO: replace with "Firstname Lastname (Organization)"
     # TODO: update with short description of the module and a link to online module documentation
@@ -276,86 +276,52 @@ class VOLImportModuleLogic(ScriptedLoadableModuleLogic):
     nhdrPathName = filePathName + ".nhdr"  #The directory of the .nhdr file
     print(".nhdr file path is: {}".format(nhdrPathName))
     
-    with open(nhdrPathName, "w") as headerFile:
-      headerFile.write("NRRD0004\n")
-      headerFile.write("# Complete NRRD file format specification at:\n")
-      headerFile.write("# http://teem.sourceforge.net/nrrd/format.html\n")
-      headerFile.write("type: ushort\n")
-      headerFile.write("dimension: 3\n")
-      headerFile.write("space: left-posterior-superior\n")
-      sizeX = imagePCRFile.X
-      sizeY = imagePCRFile.Y
-      sizeZ = imagePCRFile.Z
-      headerFile.write("sizes: {} {} {}\n".format(sizeX, sizeY, sizeZ))
-      volSpace = imagePCRFile.voxelSize
-      headerFile.write("space directions: ({}, 0.0, 0.0) (0.0, {}, 0.0) (0.0, 0.0, {})\n".format(volSpace, volSpace, volSpace))
-      headerFile.write("kinds: domain domain domain\n")
-      headerFile.write("endian: little\n")
-      headerFile.write("encoding: raw\n")
-      headerFile.write("space origin: (0.0, 0.0, 0.0)\n")
-      volPathName = filePathName + ".vol" #The path of the .vol file
-      volPathSplit = []
-      volPathSplit = volPathName.split('/') #split the file directroy by '/', the last of which is the .vol file name
-      volFileName = volPathSplit[len(volPathSplit)-1] #The name of the .vol file
-      headerFile.write("data file: {}\n".format(volFileName))
+    if fileExtension == ".pcr":
+      with open(nhdrPathName, "w") as headerFile:
+        headerFile.write("NRRD0004\n")
+        headerFile.write("# Complete NRRD file format specification at:\n")
+        headerFile.write("# http://teem.sourceforge.net/nrrd/format.html\n")
+        headerFile.write("type: ushort\n")
+        headerFile.write("dimension: 3\n")
+        headerFile.write("space: left-posterior-superior\n")
+        sizeX = imagePCRFile.X
+        sizeY = imagePCRFile.Y
+        sizeZ = imagePCRFile.Z
+        headerFile.write("sizes: {} {} {}\n".format(sizeX, sizeY, sizeZ))
+        volSpace = imagePCRFile.voxelSize
+        headerFile.write("space directions: ({}, 0.0, 0.0) (0.0, {}, 0.0) (0.0, 0.0, {})\n".format(volSpace, volSpace, volSpace))
+        headerFile.write("kinds: domain domain domain\n")
+        headerFile.write("endian: little\n")
+        headerFile.write("encoding: raw\n")
+        headerFile.write("space origin: (0.0, 0.0, 0.0)\n")
+        volPathName = filePathName + ".vol" #The path of the .vol file
+        volPathSplit = []
+        volPathSplit = volPathName.split('/') #split the file directroy by '/', the last of which is the .vol file name
+        volFileName = volPathSplit[len(volPathSplit)-1] #The name of the .vol file
+        headerFile.write("data file: {}\n".format(volFileName))
       
-    #Automatically loading .vol file using the generated .nhdr file.
-    slicer.util.loadVolume(nhdrPathName)
-    print("{} loaded\n".format(volFileName))
+      #Automatically loading .vol file using the generated .nhdr file.
+      slicer.util.loadVolume(nhdrPathName)
+      print("{} loaded\n".format(volFileName))
+    
+    else:
+      print("This is not a PCR file, please re-select a PCR file")
     
     #Automatically rendering volume after .vol file is loaded
     #volRendering = slicer.modules.volumrendering.logic()
     #showNode = volRendering.CreateDefaultVolumeRenderingNodes(VolumNode)
     
-    def showVolumeRendering(volumeNode):
-      volRenLogic = slicer.modules.volumerendering.logic()
-      displayNode = volRenLogic.CreateDefaultVolumeRenderingNodes(volumeNode)
-      displayNode.SetVisibility(True)
+    #def showVolumeRendering(volumeNode):
+      #volRenLogic = slicer.modules.volumerendering.logic()
+      #displayNode = volRenLogic.CreateDefaultVolumeRenderingNodes(volumeNode)
+      #displayNode.SetVisibility(True)
     
-    filePathSplit = []
-    filePathSplit = filePathName.split('/')
-    NodeName = filePathSplit[len(filePathSplit)-1] #File name without extension = node name
-    print("Node name is {}".format(NodeName))
+    #filePathSplit = []
+    #filePathSplit = filePathName.split('/')
+    #NodeName = filePathSplit[len(filePathSplit)-1] #File name without extension = node name
+    #print("Node name is {}".format(NodeName))
     
-    volNode = slicer.mrmlScene.GetFirstNodeByName(NodeName) #Accessing the loaded node
-    showVolumeRendering(volNode)
-    print("Volume rendering done")
-
-  #def process(self, inputVolume, outputVolume, imageThreshold, invert=False, showResult=True):
-    """
-    Run the processing algorithm.
-    Can be used without GUI widget.
-    :param inputVolume: volume to be thresholded
-    :param outputVolume: thresholding result
-    :param imageThreshold: values above/below this threshold will be set to 0
-    :param invert: if True then values above the threshold will be set to 0, otherwise values below are set to 0
-    :param showResult: show output volume in slice viewers
-    """
-"""
-    if not inputVolume or not outputVolume:
-      #raise ValueError("Input or output volume is invalid")
-
-    import time
-    startTime = time.time()
-    logging.info('Processing started')
-
-    # Compute the thresholded output volume using the "Threshold Scalar Volume" CLI module
-    cliParams = {
-      'InputVolume': inputVolume.GetID(),
-      'OutputVolume': outputVolume.GetID(),
-      'ThresholdValue' : imageThreshold,
-      'ThresholdType' : 'Above' if invert else 'Below'
-      }
-    cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True, update_display=showResult)
-    # We don't need the CLI module node anymore, remove it to not clutter the scene with it
-    slicer.mrmlScene.RemoveNode(cliNode)
-
-    stopTime = time.time()
-    logging.info('Processing completed in {0:.2f} seconds'.format(stopTime-startTime))
-"""
-
-
-#
-# VOLImportModuleTest
-#
+    #volNode = slicer.mrmlScene.GetFirstNodeByName(NodeName) #Accessing the loaded node
+    #showVolumeRendering(volNode)
+    #print("Volume rendering done")
 
