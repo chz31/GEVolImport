@@ -124,6 +124,7 @@ class VOLImportModuleWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # File dialog to select a file template for series
     self.inputFileSelector = ctk.ctkPathLineEdit()
     self.inputFileSelector.filters  = ctk.ctkPathLineEdit().Files
+    self.inputFileSelector.nameFilters = ("*.pcr", )
     self.inputFileSelector.setToolTip( "Select .pcr file from a directory of a .vol file." )
     parametersFormLayout.addRow("Select .pcr file:", self.inputFileSelector)
 
