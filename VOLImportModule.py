@@ -202,6 +202,7 @@ class PCRDataObject:
     with open (pcrFilename, 'rt') as in_file:
       for line in in_file:
         lines.append(line.strip("\n"))     # add that line list, get rid of line endings
+      self.form = lines[33].split('=')[1]
       for element in lines:  # For each element in list
         if(element.find("Volume_SizeX=")>=0):
           self.X = int(element.split('=', 1)[1])
@@ -282,7 +283,10 @@ class VOLImportModuleLogic(ScriptedLoadableModuleLogic):
         headerFile.write("NRRD0004\n")
         headerFile.write("# Complete NRRD file format specification at:\n")
         headerFile.write("# http://teem.sourceforge.net/nrrd/format.html\n")
-        headerFile.write("type: ushort\n")
+        if imagePCRFile.form == '5':
+          headerFile.write("type: ushort\n")
+        else:
+          headerFile.write("type: float\n")
         headerFile.write("dimension: 3\n")
         headerFile.write("space: left-posterior-superior\n")
         sizeX = imagePCRFile.X
