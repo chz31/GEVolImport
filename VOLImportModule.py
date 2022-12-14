@@ -312,7 +312,7 @@ class VOLImportModuleLogic(ScriptedLoadableModuleLogic):
         slicer.util.loadVolume(nhdrPathName)
         print("{} loaded\n".format(volFileName))
       else:
-        print("The format is currently not supported by this module. Currently only float (format=10), unsigned 16 bit integer (format=5) and unsigned 8 bit integer (format=1) data types are supported. Please contact us with this dataset to enable this data type. ")
+        print("The format of this dataset is currently not supported by this module. Currently only float (format=10), unsigned 16 bit integer (format=5) and unsigned 8 bit integer (format=1) data types are supported. Please contact us with this dataset to enable this data type. ")
     else:
       print("This is not a PCR file, please re-select a PCR file")
     
