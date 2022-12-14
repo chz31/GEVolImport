@@ -276,39 +276,43 @@ class VOLImportModuleLogic(ScriptedLoadableModuleLogic):
     
     filePathName, fileExtension = os.path.splitext(inputFile)
     nhdrPathName = filePathName + ".nhdr"  #The directory of the .nhdr file
-    print(".nhdr file path is: {}".format(nhdrPathName))
-    
-    if fileExtension == ".pcr":
-      with open(nhdrPathName, "w") as headerFile:
-        headerFile.write("NRRD0004\n")
-        headerFile.write("# Complete NRRD file format specification at:\n")
-        headerFile.write("# http://teem.sourceforge.net/nrrd/format.html\n")
-        if imagePCRFile.form == '5':
-          headerFile.write("type: ushort\n")
-        else:
-          headerFile.write("type: float\n")
-        headerFile.write("dimension: 3\n")
-        headerFile.write("space: left-posterior-superior\n")
-        sizeX = imagePCRFile.X
-        sizeY = imagePCRFile.Y
-        sizeZ = imagePCRFile.Z
-        headerFile.write("sizes: {} {} {}\n".format(sizeX, sizeY, sizeZ))
-        volSpace = imagePCRFile.voxelSize
-        headerFile.write("space directions: ({}, 0.0, 0.0) (0.0, {}, 0.0) (0.0, 0.0, {})\n".format(volSpace, volSpace, volSpace))
-        headerFile.write("kinds: domain domain domain\n")
-        headerFile.write("endian: little\n")
-        headerFile.write("encoding: raw\n")
-        headerFile.write("space origin: (0.0, 0.0, 0.0)\n")
-        volPathName = filePathName + ".vol" #The path of the .vol file
-        volPathSplit = []
-        volPathSplit = volPathName.split('/') #split the file directroy by '/', the last of which is the .vol file name
-        volFileName = volPathSplit[len(volPathSplit)-1] #The name of the .vol file
-        headerFile.write("data file: {}\n".format(volFileName))
       
-      #Automatically loading .vol file using the generated .nhdr file.
-      slicer.util.loadVolume(nhdrPathName)
-      print("{} loaded\n".format(volFileName))
-    
+    if fileExtension == ".pcr":
+      if imagePCRFile.form == '3' or imagePCRFile.form == '5' or imagePCRFile.form =='10':
+        with open(nhdrPathName, "w") as headerFile:
+          headerFile.write("NRRD0004\n")
+          headerFile.write("# Complete NRRD file format specification at:\n")
+          headerFile.write("# http://teem.sourceforge.net/nrrd/format.html\n")
+          if imagePCRFile.form == '5':
+            headerFile.write("type: ushort\n")
+          elif imagePCRFile.form == '10':
+            headerFile.write("type: float\n")
+          else:
+            headerFile.write("type: uchar\n") #form =3
+          headerFile.write("dimension: 3\n")
+          headerFile.write("space: left-posterior-superior\n")
+          sizeX = imagePCRFile.X
+          sizeY = imagePCRFile.Y
+          sizeZ = imagePCRFile.Z
+          headerFile.write("sizes: {} {} {}\n".format(sizeX, sizeY, sizeZ))
+          volSpace = imagePCRFile.voxelSize
+          headerFile.write("space directions: ({}, 0.0, 0.0) (0.0, {}, 0.0) (0.0, 0.0, {})\n".format(volSpace, volSpace, volSpace))
+          headerFile.write("kinds: domain domain domain\n")
+          headerFile.write("endian: little\n")
+          headerFile.write("encoding: raw\n")
+          headerFile.write("space origin: (0.0, 0.0, 0.0)\n")
+          volPathName = filePathName + ".vol" #The path of the .vol file
+          volPathSplit = []
+          volPathSplit = volPathName.split('/') #split the file directroy by '/', the last of which is the .vol file name
+          volFileName = volPathSplit[len(volPathSplit)-1] #The name of the .vol file
+          headerFile.write("data file: {}\n".format(volFileName))
+        
+        print(".nhdr file path is: {}".format(nhdrPathName))
+        #Automatically loading .vol file using the generated .nhdr file.
+        slicer.util.loadVolume(nhdrPathName)
+        print("{} loaded\n".format(volFileName))
+      else:
+        print("the scanning format is not correct. Please check the format")
     else:
       print("This is not a PCR file, please re-select a PCR file")
     
