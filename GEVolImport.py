@@ -22,8 +22,7 @@ class GEVolImport(ScriptedLoadableModule):
     self.parent.contributors = ["Chi Zhang (SCRI), Murat Maga (UW)"]  
     # TODO: update with short description of the module and a link to online module documentation
     self.parent.helpText = """
-This is an example of scripted loadable module bundled in an extension.
-See more information in <a href="https://github.com/organization/projectname#GEVolImport">module documentation</a>.
+This module imports VOL files output by the GE tome microCT scanner into 3D Slicer. It parses the PCR file to obtain the 3D image dimensions, voxel spacing, data format and other relevant metadata about the VOL file and generate a NHDR file to load the VOL file into Slicer.
 """
     # TODO: replace with organization, grant and thanks
     self.parent.acknowledgementText = """
