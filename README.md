@@ -1,6 +1,6 @@
 # GEVolImport
 
-## Summary 
+## SUMMARY
 This module imports VOL files output by the GE tome microCT scanner into 3D Slicer. It parses the PCR file to obtain the 3D image dimensions, voxel spacing, data format and other relevant metadata about the VOL file and generate a NHDR file to load the VOL file into Slicer.
 
 ## INSTALLATION
