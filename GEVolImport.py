@@ -333,4 +333,3 @@ class GEVolImportLogic(ScriptedLoadableModuleLogic):
     #volNode = slicer.mrmlScene.GetFirstNodeByName(NodeName) #Accessing the loaded node
     #showVolumeRendering(volNode)
     #print("Volume rendering done")
-
