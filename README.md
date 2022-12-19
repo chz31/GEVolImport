@@ -1,4 +1,4 @@
-# VolImportModule
+# GEVolImport
 
 This module is a prototype to import .VOL files output by the GE tome microCT scanner. It relies on the PCR file to obtain the 3D image dimensions, voxel spacing and other relevant metadata about the volume.
 
