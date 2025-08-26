@@ -1,6 +1,6 @@
 # GEVolImport
 
-*The most recent and stable version is bundled within the [SlicerMorph extension](https://github.com/SlicerMorph/SlicerMorph/tree/master/GEVolImport)
+*The most recent and stable version is bundled within the [SlicerMorph extension](https://github.com/SlicerMorph/SlicerMorph/tree/master/GEVolImport)**
 
 ## SUMMARY
 This module imports VOL files output by the GE tome microCT scanner into 3D Slicer. It parses the PCR file to obtain the 3D image dimensions, voxel spacing, data format and other relevant metadata about the VOL file and generate a NHDR file to load the VOL file into Slicer.
